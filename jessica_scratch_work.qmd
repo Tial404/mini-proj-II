@@ -1,5 +1,17 @@
 ---
 title: "jessica_scratch_work"
 format: html
+editor_options: 
+  chunk_output_type: console
 ---
+
+```{r}
+#install.packages("rinat")
+library(rinat)
+```
+
+```{r}
+get_inat_obs_project("st-olaf-natural-lands", type = "info", raw = FALSE)
+get_inat_obs_project("st-olaf-natural-lands", type = "observations")
+```
 
