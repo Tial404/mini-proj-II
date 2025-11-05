@@ -5,21 +5,21 @@ editor_options:
   chunk_output_type: console
 ---
 ```{r}
+#load libraries for extracting inat data
 library(tidyverse)
 library(rinat)
 ```
 
 
 ```{r}
-library(rinat)
-
-get_inat_obs_project("st-olaf-natural-lands", type = "info", raw = FALSE)
+#extract raw data of all observations
 raw_obs <- get_inat_obs_project("st-olaf-natural-lands", type = "observations")
 
+#
 obs_clean <- raw_obs |>
    select(observed_on, description, latitude, longitude, species_guess, user_id, created_at, updated_at, place_guess, num_identification_agreements, num_identification_disagreements, quality_grade, uri, captive) |>
   mutate(observed_on = ymd(observed_on),
-         latitude = parse_number(latitude),
+         latitude = parse_number(latitude), 
          longitude = parse_number(longitude),
          created_at = ymd(str_extract(created_at, "\\d{4}-\\d{2}-\\d{2}")),
          updated_at = ymd(str_extract(updated_at, "\\d{4}-\\d{2}-\\d{2}")),
@@ -34,4 +34,4 @@ obs_clean <- raw_obs |>
 write_csv(obs_clean, "TJ_mini3")
 ```
 
-
+variable description table
