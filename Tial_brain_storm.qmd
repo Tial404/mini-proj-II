@@ -3,3 +3,22 @@ title: "Tial_brain_storm"
 format: html
 ---
 
+```{r}
+#| include: FALSE
+
+library(rinat)
+```
+
+```{r}
+stolaf_inat <- get_inat_obs_project("st-olaf-natural-lands", type = c("observations", "info"), raw = FALSE)
+```
+```{r}
+clean_inat_stolaf |>
+  rename(species_guess = species_guess,
+         location = location) 
+  observed_on = as.numeric(observed_on)
+
+```
+
+
+
