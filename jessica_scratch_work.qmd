@@ -11,12 +11,16 @@ library(rinat)
 ```
 
 ```{r}
-get_inat_obs_project("st-olaf-natural-lands", type = "info", raw = FALSE)
-result <- get_inat_obs_project("st-olaf-natural-lands", type = "observations")
+# get_inat_obs_project("st-olaf-natural-lands", type = "info", raw = FALSE)
+# result <- get_inat_obs_project("st-olaf-natural-lands", type = "observations")
 ```
 
 ```{r}
-obs_clean <- result |>
-  select(observed_on, description, latitude, longitude, species_guess, user_id, created_at, updated_at, place_guess, num_identification_agreements, num_identification_disagreements, quality_grade, out_of_range, uri, captive)
+# obs_clean <- result |>
+#   select(observed_on, description, latitude, longitude, species_guess, user_id, created_at, updated_at, place_guess, num_identification_agreements, num_identification_disagreements, quality_grade, out_of_range, uri, captive)
+```
+
+```{r}
+stolaf_inat <- read.csv("~/mini-proj-II/clean_inat_stolaf.csv")
 ```
 
