@@ -48,8 +48,20 @@ write_csv(obs_clean, "TJ_mini3")
 ```
 
 Variable Description Table : name, type, description of what it is 
-| variable name | data type | description |
+|variable name | data type | description |
 |-------------|-------------|---------------------------------------------|
-|  |  |  |
-| | | |
+|observed_on  |Date  |The day the uploaded made the observation   |
+|description|Character | |
+|latitude |Numeric | |
+|longitude |Numeric | |
+|species |Character |The species of  |
+|user_id |Integer | |
+|created_at |Date | |
+|updated_at |Date |The date of when the uploader updated their post |
+|location |Character | |
+|id_agreements |Integer | |
+|id_disagreements |Integer | |
+|quality |Character | |
+|URL |Character | |
+|captive |Logical | |
 
