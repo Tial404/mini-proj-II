@@ -47,4 +47,5 @@ obs_clean <- raw_obs |>
 write_csv(obs_clean, "TJ_mini3")
 ```
 
-Variable Description Table : 
+Variable Description Table : name, type, description of what it is 
+
