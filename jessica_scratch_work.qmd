@@ -46,10 +46,10 @@ inat_observations <- function(location, species) {
          longitude = parse_number(longitude),
          created_at = ymd(str_extract(created_at, "\\d{4}-\\d{2}-\\d{2}")),
          updated_at = ymd(str_extract(updated_at, "\\d{4}-\\d{2}-\\d{2}")),
-         species_guess = replace_na(species_guess, "unknown"))|>
+         species_guess = str_to_lower(replace_na(species_guess, "unknown")))|>
   
 #Here, we used the rename() function to assign new names to specific columns. 
-          rename (species = species_guess,
+          rename(species = species_guess,
           location = place_guess, 
           quality = quality_grade,
           URL = uri,
@@ -59,6 +59,6 @@ inat_observations <- function(location, species) {
     obs_clean
 }
 
-inat_observations(location = "st-olaf-natural-lands", species = "American robin")
+inat_observations(location = "st-olaf-natural-lands", species = "blue jay")
 ```
 

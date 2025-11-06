@@ -44,7 +44,7 @@ obs_clean <- raw_obs |>
 ```
 
 ```{r}
-write_csv(obs_clean, "TJ_mini3")
+#write_csv(obs_clean, "TJ_mini3")
 ```
 
 Variable Description Table : name, type, description of what it is 
@@ -64,4 +64,47 @@ Variable Description Table : name, type, description of what it is
 |quality |Character | |
 |URL |Character | |
 |captive |Logical | |
+
+
+We have also created a function that allows the user to choose a location and species which will output a cleaned dataset of all the observations of that species at that location. Example below searches for all observations of blue jays at St. Olaf College. 
+
+```{r}
+inat_observations <- function(location, species) { 
+    raw_obs <- get_inat_obs_project(location, type = "observations")
+
+  #Created a new data frame called "obs_clean" from the previous data frame "raw_obs" which contains our raw data of observations. 
+    obs_clean <- raw_obs |>
+  
+  #Using the select() function, we selected specific columns we want to include in our new data frame "obs_clean."
+    select(observed_on, description, latitude, longitude, species_guess, user_id, created_at, updated_at,    place_guess, num_identification_agreements, num_identification_disagreements, quality_grade, uri, captive) |>
+  
+#We used the mutate() function to modify specific columns. 
+#The ymd() function converts date columns to follow this format:  year-month-day 
+#For the "created_at" and "updated_at" columns, we used the str_extract() function to isolate just the dates before reformatting it to years-month-day. 
+#The parse_number() function extracts numeric values from "latitude" and "longitude" columns. 
+#Finally, the replace_na() function for the "species_guess" column to replace any "NAs" with "unknown."
+  
+  mutate(observed_on = ymd(observed_on),
+         latitude = parse_number(latitude), 
+         longitude = parse_number(longitude),
+         created_at = ymd(str_extract(created_at, "\\d{4}-\\d{2}-\\d{2}")),
+         updated_at = ymd(str_extract(updated_at, "\\d{4}-\\d{2}-\\d{2}")),
+         species_guess = str_to_lower(replace_na(species_guess, "unknown")))|>
+  
+#Here, we used the rename() function to assign new names to specific columns. 
+          rename(species = species_guess,
+          location = place_guess, 
+          quality = quality_grade,
+          URL = uri,
+          id_agreements = num_identification_agreements,
+          id_disagreements = num_identification_disagreements) |>
+      filter(species == {{species}})
+    obs_clean
+}
+```
+
+```{r}
+inat_observations(location = "st-olaf-natural-lands", species = "blue jay")
+```
+
 
