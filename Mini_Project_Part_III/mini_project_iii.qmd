@@ -47,23 +47,25 @@ obs_clean <- raw_obs |>
 #write_csv(obs_clean, "TJ_mini3")
 ```
 
-Variable Description Table : name, type, description of what it is 
+Variable Description Table : 
+The variable descriptions come from the iNaturalist website  [https://www.inaturalist.org/terminology#num_identification_agreements]
+
 |variable name | data type | description |
 |-------------|-------------|---------------------------------------------|
-|observed_on  |Date  |The day the uploaded made the observation   |
-|description|Character | |
-|latitude |Numeric | |
-|longitude |Numeric | |
-|species |Character |The species of  |
-|user_id |Integer | |
-|created_at |Date | |
+|observed_on  |Date  |The date of when the observation was made |
+|description|Character |Comments/notes from the observer |
+|latitude |Numeric |The latitude of the location where the observation was made |
+|longitude |Numeric |The longitude of the location where the observation was made |
+|species |Character |The name of the observed taxon |
+|user_id |Integer |The identifier for the observer |
+|created_at |Date |The date of when the observation was uploaded onto iNaturalist |
 |updated_at |Date |The date of when the uploader updated their post |
-|location |Character | |
-|id_agreements |Integer | |
-|id_disagreements |Integer | |
-|quality |Character | |
-|URL |Character | |
-|captive |Logical | |
+|location |Character |The location of where the observation was made|
+|id_agreements |Integer |The number of matching  identifications made by either the observer or community members|
+|id_disagreements |Integer |The number of identifications  made by either the observer or community members that do not match |
+|quality |Character |Observation grades based on accuracy, completeness, and relevance. The grades are separated into three categories: "needs ID," "casual," and "Research Grade." Observations are marked as “needs ID” if the community has not agreed on an identification, but the observation is verifiable. Observations are marked as “casual” if the observation is not verifiable, either due to missing or unreliable information. Observations are marked as “Research Grade” if the community agrees on the species identification. |
+|URL |Character |The link/URL to the observation |
+|captive |Logical |Uses “True” or “False” to indicate whether the observed organism was intentionally placed there by humans (true) or if it is a wild organism (false) |
 
 
 We have also created a function that allows the user to choose a location and species which will output a cleaned dataset of all the observations of that species at that location. Example below searches for all observations of blue jays at St. Olaf College. 
