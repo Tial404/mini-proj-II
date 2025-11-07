@@ -109,4 +109,4 @@ inat_observations <- function(location, species) {
 inat_observations(location = "st-olaf-natural-lands", species = "blue jay")
 ```
 
-
+With this dataset, we can explore things like the distribution of various species in the St. Olaf natural lends, trends over time in the frequency of both overall and per-species observations, and the most and least commonly observed species at St. Olaf. Because we have location data, this dataset is well suited for mapping, but counts and counts over time are also interesting observations. We can additionally explore trends in how iNaturalist is used at St. Olaf, including the quality of observations and how reliable they are based on verification or lack thereof. 
