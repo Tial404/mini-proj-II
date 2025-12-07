@@ -62,3 +62,61 @@ inat_observations <- function(location, species) {
 inat_observations(location = "st-olaf-natural-lands", species = "blue jay")
 ```
 
+```{r}
+library(tidyverse)
+library(stringr)
+library(rvest)
+library(polite)
+library(sf)
+library(maps)
+library(viridis)
+library(leaflet)
+library(htmltools)
+```
+
+```{r}
+session <- bow("https://www.dnr.state.mn.us/invasives/terrestrialplants/index.html", force = TRUE)
+
+in_plants <- scrape(session) |>
+  html_nodes("ul") |>
+  html_text()
+test <- in_plants[c(15,16,17,18)]
+```
+
+```{r}
+str_view(x1, "(.)(.)(..)\\2\\1")
+test2 <- data.frame(test)
+test3 <- test2 |>
+  mutate(test = str_replace_all(test, "([a-z])([A-Z])", "\\1*\\2")) |>
+  separate(col = test, sep = "\\*", into = as.character(1:30)) |>
+  pivot_longer(cols = 1:30, names_to = "drop", values_to = "species") |>
+  select(species) |>
+  filter(!is.na(species))
+```
+
+```{r}
+species <- c("European Starling",
+"Mute Swan",
+"Asian-Long horned beetle",
+"Brown marmorated stink bug",
+"Emerald ash borer",
+"Spongy moth",
+"Japanese beetle",
+"Spotted lantern fly",
+"Eurasian swine",
+"Earthworms",
+"Jumping worm")
+animals <- data.frame(species)
+```
+
+```{r}
+invasives <- rbind(test3, animals) |>
+  mutate(native = "invasive",
+         species = str_to_lower(species))
+```
+
+```{r}
+test4 <- clean_inat_stolaf |>
+  mutate(species_guess = str_to_lower(species_guess)) |>
+  left_join(invasives, by = join_by(species_guess == species))
+```
