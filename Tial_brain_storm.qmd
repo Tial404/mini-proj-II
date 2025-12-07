@@ -1,24 +1,122 @@
 ---
-title: "Tial_brain_storm"
-format: html
+title: "brainstorming"
+format: pdf
+editor_options: 
+  chunk_output_type: console
 ---
-
 ```{r}
-#| include: FALSE
-
+#load libraries for extracting inat data
+library(tidyverse)
 library(rinat)
+library(readr)
+
+clean_inat_stolaf <- read_csv("clean_inat_stolaf.csv")
+```
+
+
+```{r}
+raw_obs <- get_inat_obs_project("st-olaf-natural-lands", type = "observations")
+
+obs_clean <- raw_obs |>
+  
+   select(observed_on, description, latitude, longitude, species_guess, user_id, created_at, updated_at,    place_guess, num_identification_agreements, num_identification_disagreements, quality_grade, uri, captive) |>
+
+  
+  mutate(observed_on = ymd(observed_on),
+         latitude = parse_number(latitude), 
+         longitude = parse_number(longitude),
+         created_at = ymd(str_extract(created_at, "\\d{4}-\\d{2}-\\d{2}")),
+         updated_at = ymd(str_extract(updated_at, "\\d{4}-\\d{2}-\\d{2}")),
+         species_guess = replace_na(species_guess, "unknown"))|>
+
+          rename (species = species_guess,
+          location = place_guess, 
+          quality = quality_grade,
+          URL = uri,
+          id_agreements = num_identification_agreements,
+          id_disagreements = num_identification_disagreements) 
+```
+##What species are most frequently observed by students and faculty at St Olaf College?
+```{r}
+topten <- clean_inat_stolaf |>
+  drop_na(species_guess) |>
+  count(species_guess, sort = TRUE) |>
+  slice(1:10)
+
+print(topten)
+```
+
+##How frequently are these species observed and identified ?
+```{r}
+topfifty <- clean_inat_stolaf |>
+  drop_na(species_guess) |>
+  count(species_guess, sort = TRUE) |>
+  slice(1:50)
+
+print(topfifty)
 ```
 
 ```{r}
-stolaf_inat <- get_inat_obs_project("st-olaf-natural-lands", type = c("observations", "info"), raw = FALSE)
+topfiftyjoined <- topfifty |>
+  left_join(clean_inat_stolaf, by = "species_guess") 
+  
+  print(topfiftyjoined)
 ```
+
 ```{r}
-clean_inat_stolaf |>
-  rename(species_guess = species_guess,
-         location = location) 
-  observed_on = as.numeric(observed_on)
+topfiftyjoined |>
+  ggplot(aes(x = species_guess, fill = quality_grade)) +
+  geom_bar(position = "stack") + 
+  theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),  
+        panel.grid.minor = element_line(color = "grey90")) + 
+    labs(title = "Frequency of species observed and identified",
+       subtitle = "Based on Quality Grade",
+       x = "Species",
+       y = "Number of observations") +
+  scale_fill_viridis_d(option = "mako")
+```
+
+##When and where are these species being observed ?
+```{r}
+library(leaflet)
+
+leaflet() |> 
+  addTiles() |>
+  setView(-93.1832, 44.4597, zoom = 17) |>   
+  addPopups(-93.18226, 44.45861, 'Here is the 
+Norway Valley Dr, Northfield, MN, US' )
 
 ```
+
+```{r}
+#| message: false
+#| include: false
+
+stuff.df <- clean_inat_stolaf |> 
+```
+
+```{r}
+leaflet() |>
+    addTiles() |>
+    setView(lng = mean(stuff.df$Long), lat = mean(stuff.df$Lat), 
+            zoom = 13) |> 
+    addCircleMarkers(data = stuff.df,
+        lat = ~ Lat, 
+        lng = ~ Long, 
+        popup = ~ AboutListing, 
+        radius = ~ S_Accomodates,  
+        # These last options describe how the circles look
+        weight = 2,
+        color = "black", 
+        fillColor = "lightblue")
+```
+
+##How many invasive species are identified at St Olaf College?
+
+
+##How many native species are identified at St Olaf College?
+
 
 
 
