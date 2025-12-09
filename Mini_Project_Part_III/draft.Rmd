@@ -21,19 +21,18 @@ About
 Column {data-width = 200}
 -------------------------
 
-**Background Information**
+**Introduction**
 
+We are interested in seeing what species are frequently reported at St. Olaf College and getting an idea of their distribution. We’d like to get an idea of the biodiversity that can be found at St. Olaf as well as how students are interacting with it. We hope to answer the frequency of how often students encounter certain species in terms of location and month, as well as over the years. We are also interested in observing what species are the most commonly identified how many of those are native or invasive. 
 
 Column {data-width = 200}
 -------------------------
 
 
-Top 10 species frequently identified 
+Top 10 frequently identified species
 ========================================
-Inputs {.sidebar}
--------------------------
 
-```{r}
+```{r, echo=FALSE, warning=FALSE}
 topten <- inat_stolaf |>
   drop_na(species_guess) |>
   count(species_guess, sort = TRUE) |>
@@ -42,34 +41,24 @@ topten <- inat_stolaf |>
 print(topten)
 ```
 
-Column 
--------------------------
-
-Column {data-width = 300} {data-length = 100}
--------------------------
 
 Species observed:
 ========================================
-Inputs {.sidebar}
--------------------------
-```{r}
-topfifty <- inat_stolaf |>
+
+```{r, echo=FALSE, warning=FALSE}
+top25 <- inat_stolaf |>
   drop_na(species_guess) |>
   count(species_guess, sort = TRUE) |>
-  slice(1:50)
+  slice(1:25)
 
-print(topfifty)
-```
-
-```{r}
-topfiftyjoined <- topfifty |>
+top25joined <- top25|>
   left_join(inat_stolaf, by = "species_guess") 
   
-  print(topfiftyjoined)
 ```
 
-```{r}
-topfiftyjoined |>
+
+```{r, echo=FALSE, warning=FALSE}
+top25joined |>
   ggplot(aes(x = species_guess, fill = quality_grade)) +
   geom_bar(position = "stack") + 
   theme_minimal() +
@@ -82,32 +71,10 @@ topfiftyjoined |>
   scale_fill_viridis_d(option = "mako")
 ```
 
-Column 
--------------------------
-```{r, echo=FALSE, warning=FALSE}
-renderPlot({
-     if (input$type_check) 
-        ggplot(penguins, aes(x = species, y = bill_len))  + 
-          geom_jitter(aes(color = sex), size = 0.9, alpha = 0.9) +
-          scale_color_manual(values=c("purple","blue"))  +
-    theme_bw()
-  
-     else if (!input$type_check)      
-        ggplot(penguins, aes(x = species, y = bill_len))  + 
-          geom_jitter(size = 0.9, alpha = 0.9) +
-          scale_color_manual(values=c("purple","blue"))  +
-    theme_bw()
-})
-```
-Column {data-width = 300} {data-length = 100}
--------------------------
-
 Location 
 ==========================
 
-Inputs {.sidebar}
--------------------------
-```{r}
+```{r, echo=FALSE, warning=FALSE}
 library(leaflet)
 
 leaflet() |> 
@@ -115,5 +82,5 @@ leaflet() |>
   setView(-93.1832, 44.4597, zoom = 17) |>   
   addPopups(-93.18226, 44.45861, 'Here is the 
 Norway Valley Dr, Northfield, MN, US' )
-
 ```
+
