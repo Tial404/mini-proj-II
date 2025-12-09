@@ -12,7 +12,7 @@ library(tidyverse)
 library(rinat)
 
 library(readr)
-clean_inat_stolaf <- read_csv("clean_inat_stolaf.csv")
+clean_inat_stolaf <- read_csv("~/mini-proj-II/clean_inat_stolaf.csv")
 View(clean_inat_stolaf)
 ```
 
