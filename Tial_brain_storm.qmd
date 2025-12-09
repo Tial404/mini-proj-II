@@ -89,28 +89,6 @@ Norway Valley Dr, Northfield, MN, US' )
 
 ```
 
-```{r}
-#| message: false
-#| include: false
-
-stuff.df <- clean_inat_stolaf |> 
-```
-
-```{r}
-leaflet() |>
-    addTiles() |>
-    setView(lng = mean(stuff.df$Long), lat = mean(stuff.df$Lat), 
-            zoom = 13) |> 
-    addCircleMarkers(data = stuff.df,
-        lat = ~ Lat, 
-        lng = ~ Long, 
-        popup = ~ AboutListing, 
-        radius = ~ S_Accomodates,  
-        # These last options describe how the circles look
-        weight = 2,
-        color = "black", 
-        fillColor = "lightblue")
-```
 
 ##How many invasive species are identified at St Olaf College?
 
