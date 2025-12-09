@@ -12,8 +12,7 @@ library(tidyverse)
 library(rinat)
 
 library(readr)
-clean_inat_stolaf <- read_csv("~/mini-proj-II/clean_inat_stolaf.csv")
-View(clean_inat_stolaf)
+inat_stolaf <- read_csv("~/mini-proj-II/inat_with_invasives.csv")
 ```
 
 About
@@ -35,7 +34,7 @@ Inputs {.sidebar}
 -------------------------
 
 ```{r}
-topten <- clean_inat_stolaf |>
+topten <- inat_stolaf |>
   drop_na(species_guess) |>
   count(species_guess, sort = TRUE) |>
   slice(1:10)
@@ -54,7 +53,7 @@ Species observed:
 Inputs {.sidebar}
 -------------------------
 ```{r}
-topfifty <- clean_inat_stolaf |>
+topfifty <- inat_stolaf |>
   drop_na(species_guess) |>
   count(species_guess, sort = TRUE) |>
   slice(1:50)
@@ -64,7 +63,7 @@ print(topfifty)
 
 ```{r}
 topfiftyjoined <- topfifty |>
-  left_join(clean_inat_stolaf, by = "species_guess") 
+  left_join(inat_stolaf, by = "species_guess") 
   
   print(topfiftyjoined)
 ```
