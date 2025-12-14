@@ -9,33 +9,12 @@ editor_options:
 library(tidyverse)
 library(rinat)
 library(readr)
+library(dplyr)
 
-clean_inat_stolaf <- read_csv("clean_inat_stolaf.csv")
+inat_stolaf <- read_csv("~/mini-proj-II/inat_with_invasives.csv")
 ```
 
 
-```{r}
-raw_obs <- get_inat_obs_project("st-olaf-natural-lands", type = "observations")
-
-obs_clean <- raw_obs |>
-  
-   select(observed_on, description, latitude, longitude, species_guess, user_id, created_at, updated_at,    place_guess, num_identification_agreements, num_identification_disagreements, quality_grade, uri, captive) |>
-
-  
-  mutate(observed_on = ymd(observed_on),
-         latitude = parse_number(latitude), 
-         longitude = parse_number(longitude),
-         created_at = ymd(str_extract(created_at, "\\d{4}-\\d{2}-\\d{2}")),
-         updated_at = ymd(str_extract(updated_at, "\\d{4}-\\d{2}-\\d{2}")),
-         species_guess = replace_na(species_guess, "unknown"))|>
-
-          rename (species = species_guess,
-          location = place_guess, 
-          quality = quality_grade,
-          URL = uri,
-          id_agreements = num_identification_agreements,
-          id_disagreements = num_identification_disagreements) 
-```
 ##What species are most frequently observed by students and faculty at St Olaf College?
 ```{r}
 topten <- clean_inat_stolaf |>
@@ -47,24 +26,20 @@ print(topten)
 ```
 
 ##How frequently are these species observed and identified ?
+
 ```{r}
-topfifty <- clean_inat_stolaf |>
+top25 <- inat_stolaf |>
   drop_na(species_guess) |>
   count(species_guess, sort = TRUE) |>
-  slice(1:50)
+  slice(1:25)
 
-print(topfifty)
+top25joined <- top25|>
+  left_join(inat_stolaf, by = "species_guess") 
 ```
 
-```{r}
-topfiftyjoined <- topfifty |>
-  left_join(clean_inat_stolaf, by = "species_guess") 
-  
-  print(topfiftyjoined)
-```
 
 ```{r}
-topfiftyjoined |>
+top25joined |>
   ggplot(aes(x = species_guess, fill = quality_grade)) +
   geom_bar(position = "stack") + 
   theme_minimal() +
@@ -78,17 +53,44 @@ topfiftyjoined |>
 ```
 
 ##When and where are these species being observed ?
+
+
+
+----use this!!-----
+```{r}
+unique_coords <- unique(inat_stolaf[c("latitude", "longitude")])
+
+```
+
+```{r}
+library(leaflet)  
+
+leaflet() |>
+  addTiles() |>
+  setView(lng = mean(unique_coords$longitude), 
+          lat = mean(unique_coords$latitude), 
+          zoom = 13) |> 
+  addCircleMarkers(data = unique_coords,
+    lat = ~latitude, 
+    lng = ~longitude, 
+    popup = "Observation Location",  
+    radius = 2,
+    weight = 2,
+    color = "purple", 
+    fillColor = "purple")
+
+```
+
+
+----not this---
 ```{r}
 library(leaflet)
 
 leaflet() |> 
   addTiles() |>
-  setView(-93.1832, 44.4597, zoom = 17) |>   
-  addPopups(-93.18226, 44.45861, 'Here is the 
-Norway Valley Dr, Northfield, MN, US' )
-
+  setView(-93.18226, 44.45861, zoom = 17) |>
+  addMarkers(lng = -93.18226, lat = 44.45861, popup = "Observation Location") 
 ```
-
 
 ##How many invasive species are identified at St Olaf College?
 
