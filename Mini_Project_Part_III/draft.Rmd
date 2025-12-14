@@ -131,3 +131,69 @@ renderPlot({
   labs(x = "Year", y = "Invasive Observations")
 })
 ```
+
+Seasonal Shifts
+========================================
+
+Column {data-width = 400}
+-------------------------
+
+```{r, echo=FALSE}
+inputPanel(
+  checkboxGroupInput("checkGroup", label = h3("Species"), 
+    choices = list("bloodroot", "virginia waterleaf","black-capped chickadee", "jack-in-the-pulpit", "american toad", "sugar maple", "white-faced meadowhawk", "american crow", "common green darner", "downy woodpecker"),
+    selected = "bloodroot"),
+)
+
+renderPlot({
+  topten <- inat_stolaf |>
+  drop_na(species_guess) |>
+  count(species_guess, sort = TRUE) |>
+  filter(species_guess != "dicots") |>
+  slice(1:10) 
+
+inat_stolaf |>
+  filter(!is.na(observed_on)) |>
+  mutate(season = ifelse(month(observed_on) %in% c(12, 1, 2), "Winter", 
+                         ifelse(month(observed_on) %in% c(3,4,5), "Spring",
+                                ifelse(month(observed_on) %in% c(6,7,8), "Summer", "Fall"))),
+         season = fct_relevel(season, "Winter", "Spring", "Summer", "Fall")) |>
+  inner_join(topten, by = join_by(species_guess)) |>
+  filter(species_guess %in% input$checkGroup) |>
+  group_by(species_guess, season, .drop = FALSE) |>
+  summarise(count = n())|>
+  ggplot(aes(x = season, y = count, color = species_guess, group = species_guess)) +
+  geom_point() +
+  geom_line() +
+  labs(x = "Season",
+       y = "Num. Observations",
+       color = "Species")
+}, height = 500)
+```
+
+Column {data-width = 400}
+-------------------------
+
+```{r, echo=FALSE}
+inputPanel(
+  selectInput("select", label = h3("Season"), 
+    choices = list("Winter", "Spring", "Summer", "Fall"), 
+    selected = "Winter")
+)
+
+renderPlot({
+  inat_stolaf |>
+  filter(!is.na(observed_on)) |>
+  mutate(season = ifelse(month(observed_on) %in% c(12, 1, 2), "Winter", 
+                         ifelse(month(observed_on) %in% c(3,4,5), "Spring",
+                                ifelse(month(observed_on) %in% c(6,7,8), "Summer", "Fall"))),
+         season = fct_relevel(season, "Winter", "Spring", "Summer", "Fall"),
+         native = replace_na(native, "native"),
+         year_obs = year(observed_on)) |>
+  group_by(native, season, year_obs, .drop = FALSE) |>
+  summarise(count = n()) |>
+  filter(season == input$select) |>
+  ggplot(aes(x = native, y = count)) +
+  geom_boxplot()
+}, height = 500)
+```
