@@ -1,5 +1,5 @@
 ---
-title: "Flexdashboard "
+title: "Jessica Scratch"
 output: flexdashboard::flex_dashboard
 runtime: shiny
 ---
@@ -83,18 +83,17 @@ top25joined |>
   scale_fill_viridis_d(option = "mako")
 ```
 
-
 Invasive vs Native Species:
 ========================================
 
 Column {data-width = 200}
 -------------------------
-```{r, echo = FALSE, warning = FALSE}
+```{r}
 invasives <- inat_stolaf |>
   filter(native == "invasive")
 ```
 
-```{r, echo = FALSE, warning = FALSE}
+```{r}
 invasives |>
   group_by(species_guess) |>
   summarise(count = n()) |>
@@ -106,10 +105,21 @@ invasives |>
   labs(x = "Species", y = "Num. Observations")
 ```
 
+```{r}
+inat_stolaf |>
+  mutate(year_obs = year(observed_on)) |>
+  group_by(year_obs) |>
+  summarise(total = n(),
+            `Num. Invasives` = sum(native=="invasive", na.rm = TRUE),
+            `Prop. Invasives` = `Num. Invasives`/total) |>
+  ggplot(aes(x = year_obs, y = `Prop. Invasives`)) +
+  geom_point()
+```
+
 Column {data-width = 200}
 -------------------------
 
-```{r, echo = FALSE, warning = FALSE}
+```{r, echo=FALSE}
 inputPanel(
   radioButtons("radio", label = h3("y-axis"),
     choices = list("Num. Invasives" = "num_invasive", "Prop. Invasives" = "prop_invasive"), 
@@ -131,3 +141,4 @@ renderPlot({
   labs(x = "Year", y = "Invasive Observations")
 })
 ```
+
