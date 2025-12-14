@@ -27,6 +27,18 @@ We are interested in seeing what species are frequently reported at St. Olaf Col
 
 Column {data-width = 200}
 -------------------------
+Location 
+==========================
+
+```{r, echo=FALSE, warning=FALSE}
+library(leaflet)
+
+leaflet() |> 
+  addTiles() |>
+  setView(-93.1832, 44.4597, zoom = 17) |>   
+  addPopups(-93.18226, 44.45861, 'Here is the 
+Norway Valley Dr, Northfield, MN, US' )
+```
 
 
 Top 10 frequently identified species
@@ -71,16 +83,4 @@ top25joined |>
   scale_fill_viridis_d(option = "mako")
 ```
 
-Location 
-==========================
-
-```{r, echo=FALSE, warning=FALSE}
-library(leaflet)
-
-leaflet() |> 
-  addTiles() |>
-  setView(-93.1832, 44.4597, zoom = 17) |>   
-  addPopups(-93.18226, 44.45861, 'Here is the 
-Norway Valley Dr, Northfield, MN, US' )
-```
 
