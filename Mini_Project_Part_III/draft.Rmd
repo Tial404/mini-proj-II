@@ -25,7 +25,26 @@ Column {data-width = 200}
 
 **Introduction**
 
-We are interested in seeing what species are frequently reported at St. Olaf College and getting an idea of their distribution. We’d like to get an idea of the biodiversity that can be found at St. Olaf as well as how students are interacting with it. We hope to answer the frequency of how often students encounter certain species in terms of location and month, as well as over the years. We are also interested in observing what species are the most commonly identified how many of those are native or invasive. 
+This project will investigate which species are most frequently reported at St. Olaf College, providing insight into their distribution across campus. Our goal is to better understand the biodiversity present at St. Olaf and how students interact with it. We aim to analyze how often students encounter particular species by location, month, and year. Additionally, we will examine which species are most commonly identified and assess how many of these are native versus invasive.
+
+To summarize, the questions we want to answer are: 
+What species are most frequently observed by students and faculty at St Olaf College?
+How frequently are these species observed and identified ?
+When and where are these species being observed ?
+How many invasive species are identified at St Olaf College?
+How many native species are identified at St Olaf College?
+
+All of our data are extracted from the iNaturalist St. Olaf project, which relies on individuals to report their observations. As a result, some species that are abundant at St. Olaf may not appear in our analysis due to a lack of student submitted observations. Therefore, this project provides a general overview rather than a complete or fully accurate representation of species abundance on campus.
+
+**Important Links** 
+
+Here is the link for our iNaturalost Dataset : (https://www.inaturalist.org/observations?project_id=st-olaf-natural-lands&place_id=any&verifiable=any) 
+
+Here is the link from Minnesota DNR webpage  : (https://www.dnr.state.mn.us/invasives/terrestrialplants/index.html)
+
+**Link to our code!**
+
+https://github.com/Tial404/mini-proj-II.git
 
 Column {data-width = 200}
 -------------------------
@@ -59,25 +78,42 @@ Column {data-width=300}
 -------------------------------------
 
 ```{r, echo=FALSE, warning=FALSE}
-top25 <- inat_stolaf |>
-  drop_na(species_guess) |>
-  count(species_guess, sort = TRUE) |>
-  slice(1:25)
+inputPanel(
+  radioButtons(
+    "top_num",
+    label = h3("Top"),
+    choices = c(5, 10, 15, 20, 25, 30),
+    selected = 5
+  )
+)
 
-top25joined <- top25|>
-  left_join(inat_stolaf, by = "species_guess") 
+renderPlot({
 
-top25joined |>
-  ggplot(aes(x = species_guess, fill = quality_grade)) +
-  geom_bar(position = "stack") + 
-  theme_minimal() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1),  
-        panel.grid.minor = element_line(color = "grey90")) + 
-    labs(title = "Frequency of species observed and identified",
-       subtitle = "Based on Quality Grade",
-       x = "Species",
-       y = "Number of observations") +
-  scale_fill_viridis_d(option = "mako")
+  top_num <- inat_stolaf |>
+    drop_na(species_guess) |>
+    count(species_guess, sort = TRUE) |>
+    slice(1:as.numeric(input$top_num))
+
+  top_num_joined <- top_num |>
+    left_join(inat_stolaf, by = "species_guess")
+
+  ggplot(top_num_joined, aes(x = species_guess, fill = quality_grade)) +
+    geom_bar(position = "stack") +
+    theme_minimal() +
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1),
+      panel.grid.minor = element_line(color = "grey90")
+    ) +
+    labs(
+      title = "Frequency of species observed and identified",
+      subtitle = "Based on Quality Grade",
+      x = "Species",
+      y = "Number of observations"
+    ) +
+    scale_fill_viridis_d(option = "mako")
+})
+
+
 ```
 
 Column {data-width=700}
