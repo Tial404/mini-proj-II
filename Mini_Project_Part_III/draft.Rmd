@@ -50,6 +50,9 @@ Column {data-width = 200}
 -------------------------
 Observation Location
 ==========================
+**Comment**
+
+This is a leadlet map that pinpoints where the observations were made
 
 ```{r, echo=FALSE, warning=FALSE}
 unique_coords <- unique(inat_stolaf[c("latitude", "longitude")])
@@ -76,6 +79,10 @@ Common Species
 ========================================
 Column {data-width=300}
 -------------------------------------
+
+**Common Species**
+
+Creating a bar chart allows us to clearly visualize the most common species, making it easy to compare their relative frequencies. 
 
 ```{r, echo=FALSE, warning=FALSE}
 inputPanel(
@@ -118,6 +125,10 @@ renderPlot({
 
 Column {data-width=700}
 -------------------------------------
+**Observations throughout the year**
+
+Creating a scatterplot to visualize which species students encounter and the frequency of occurrence can provide valuable insight into species distribution throughout the year. This approach helps reveal patterns over time, such as seasonal trends or periods of higher biodiversity, making the data easier to interpret and compare.
+
 ```{r,echo=FALSE}
 inputPanel(
   checkboxGroupInput("checkGroup", label = h3("Years"), 
