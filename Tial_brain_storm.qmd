@@ -25,7 +25,10 @@ topten <- clean_inat_stolaf |>
 print(topten)
 ```
 
-##How frequently are these species observed and identified ?
+
+
+
+##Common species
 
 ```{r}
 top25 <- inat_stolaf |>
@@ -35,10 +38,7 @@ top25 <- inat_stolaf |>
 
 top25joined <- top25|>
   left_join(inat_stolaf, by = "species_guess") 
-```
 
-
-```{r}
 top25joined |>
   ggplot(aes(x = species_guess, fill = quality_grade)) +
   geom_bar(position = "stack") + 
@@ -60,9 +60,6 @@ top25joined |>
 ```{r}
 unique_coords <- unique(inat_stolaf[c("latitude", "longitude")])
 
-```
-
-```{r}
 library(leaflet)  
 
 leaflet() |>

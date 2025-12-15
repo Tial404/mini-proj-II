@@ -10,6 +10,8 @@ library(tidyverse)
 library(AER)
 library(tidyverse)
 library(rinat)
+library(dplyr)
+library(lubridate)
 
 library(readr)
 inat_stolaf <- read_csv("~/mini-proj-II/inat_with_invasives.csv")
@@ -27,35 +29,34 @@ We are interested in seeing what species are frequently reported at St. Olaf Col
 
 Column {data-width = 200}
 -------------------------
-Location 
+Observation Location
 ==========================
 
 ```{r, echo=FALSE, warning=FALSE}
-library(leaflet)
+unique_coords <- unique(inat_stolaf[c("latitude", "longitude")])
 
-leaflet() |> 
+library(leaflet)  
+
+leaflet() |>
   addTiles() |>
-  setView(-93.1832, 44.4597, zoom = 17) |>   
-  addPopups(-93.18226, 44.45861, 'Here is the 
-Norway Valley Dr, Northfield, MN, US' )
+  setView(lng = mean(unique_coords$longitude), 
+          lat = mean(unique_coords$latitude), 
+          zoom = 13) |> 
+  addCircleMarkers(data = unique_coords,
+    lat = ~latitude, 
+    lng = ~longitude, 
+    popup = "Observation Location",  
+    radius = 2,
+    weight = 2,
+    color = "purple", 
+    fillColor = "purple")
+
 ```
 
-
-Top 10 frequently identified species
+Common Species
 ========================================
-
-```{r, echo=FALSE, warning=FALSE}
-topten <- inat_stolaf |>
-  drop_na(species_guess) |>
-  count(species_guess, sort = TRUE) |>
-  slice(1:10)
-
-print(topten)
-```
-
-
-Species observed:
-========================================
+Column {data-width=300}
+-------------------------------------
 
 ```{r, echo=FALSE, warning=FALSE}
 top25 <- inat_stolaf |>
@@ -65,11 +66,7 @@ top25 <- inat_stolaf |>
 
 top25joined <- top25|>
   left_join(inat_stolaf, by = "species_guess") 
-  
-```
 
-
-```{r, echo=FALSE, warning=FALSE}
 top25joined |>
   ggplot(aes(x = species_guess, fill = quality_grade)) +
   geom_bar(position = "stack") + 
@@ -83,8 +80,48 @@ top25joined |>
   scale_fill_viridis_d(option = "mako")
 ```
 
+Column {data-width=700}
+-------------------------------------
+```{r,echo=FALSE}
+inputPanel(
+  checkboxGroupInput("checkGroup", label = h3("Years"), 
+    choices = list("2010", "2011","2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025"),
+    selected = "2025"),
+)
 
-Invasive vs Native Species:
+renderPlot({
+  toptwentyfive <- inat_stolaf |>
+  drop_na(species_guess) |>
+  count(species_guess, sort = TRUE) |>
+  slice(1:25)
+  
+    inat_stolaf2 <- inat_stolaf |>
+    mutate(observed_on = ymd(observed_on),
+           year = year(observed_on)) |> 
+
+    inner_join(toptwentyfive, by = join_by(species_guess)) |>
+    filter(year %in% as.numeric(input$checkGroup)) |>
+    group_by(species_guess, year, .drop = FALSE) |>
+    summarise(count = n())
+
+
+  ggplot(inat_stolaf2, 
+         aes(x = year, y = count, color = species_guess, group = species_guess)) +
+  geom_point() +
+  geom_line() +
+  labs(x = "year",
+       y = "Num. Observations",
+       color = "Species") +
+        theme(axis.text = element_text(size = 18)) +
+        theme(axis.title = element_text(size = 20)) +
+        theme(plot.title = element_text(size=22)) +
+  scale_x_continuous(breaks = ~ axisTicks(., log = FALSE)) +
+    theme_bw()
+})
+```
+
+
+Invasive vs Native Species
 ========================================
 
 Column {data-width = 200}
@@ -103,7 +140,8 @@ invasives |>
   geom_col() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),  
         panel.grid.minor = element_line(color = "grey90")) +
-  labs(x = "Species", y = "Num. Observations")
+  labs(x = "Species", y = "Num. Observations")  +
+    theme_bw()
 ```
 
 Column {data-width = 200}
@@ -128,8 +166,9 @@ renderPlot({
   filter(type == input$radio) |>
   ggplot(aes(x = year_obs, y = invasive_obs)) +
   geom_point() +
-  labs(x = "Year", y = "Invasive Observations")
-})
+  labs(x = "Year", y = "Invasive Observations")  +
+    theme_bw()
+}, height = 500)
 ```
 
 Seasonal Shifts
@@ -167,7 +206,8 @@ inat_stolaf |>
   geom_line() +
   labs(x = "Season",
        y = "Num. Observations",
-       color = "Species")
+       color = "Species")  +
+    theme_bw()
 }, height = 500)
 ```
 
@@ -194,6 +234,7 @@ renderPlot({
   summarise(count = n()) |>
   filter(season == input$select) |>
   ggplot(aes(x = native, y = count)) +
-  geom_boxplot()
+  geom_boxplot()  +
+    theme_bw()
 }, height = 500)
 ```
