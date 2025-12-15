@@ -1,5 +1,5 @@
 ---
-title: "Flexdashboard "
+title: "Nature of St. Olaf"
 output: flexdashboard::flex_dashboard
 runtime: shiny
 ---
@@ -20,7 +20,7 @@ inat_stolaf <- read_csv("~/mini-proj-II/inat_with_invasives.csv")
 About
 ==========================
 
-Column {data-width = 200}
+Column 
 -------------------------
 
 **Introduction**
@@ -38,7 +38,7 @@ All of our data are extracted from the iNaturalist St. Olaf project, which relie
 
 **Important Links** 
 
-Here is the link for our iNaturalost Dataset : (https://www.inaturalist.org/observations?project_id=st-olaf-natural-lands&place_id=any&verifiable=any) 
+Here is the link for our iNaturalist Dataset : (https://www.inaturalist.org/observations?project_id=st-olaf-natural-lands&place_id=any&verifiable=any) 
 
 Here is the link from Minnesota DNR webpage  : (https://www.dnr.state.mn.us/invasives/terrestrialplants/index.html)
 
@@ -46,13 +46,23 @@ Here is the link from Minnesota DNR webpage  : (https://www.dnr.state.mn.us/inva
 
 https://github.com/Tial404/mini-proj-II.git
 
-Column {data-width = 200}
+Column 
 -------------------------
-Observation Location
-==========================
-**Comment**
 
-This is a leadlet map that pinpoints where the observations were made
+```{r, echo=FALSE}
+
+renderImage({
+    # Return a list
+    list(src = "~/mini-proj-II/natlands.png",
+         alt = "This is alternate text", width = 500, height = 700)
+  })
+```
+
+Observation Locations
+==========================
+**Mapping observations**
+
+This leaflet map shows the distribution of the observations we use for this project. They are spread across the St. Olaf Natural Lands, unsurprisingly often close to trails. 
 
 ```{r, echo=FALSE, warning=FALSE}
 unique_coords <- unique(inat_stolaf[c("latitude", "longitude")])
@@ -82,7 +92,7 @@ Column {data-width=300}
 
 **Common Species**
 
-Creating a bar chart allows us to clearly visualize the most common species, making it easy to compare their relative frequencies. 
+Creating a bar chart allows us to clearly visualize the most common species, making it easy to compare their relative frequencies. We see that there is a mixture of both plants and animals reported. The quality grade helps us see which reports may be less reliable, with "research" indicating a high level of accuracy, while "needs id" tells us that the observation may be incorrect or too general. For example, "dicots" is a broad category of plants, so many observations are labeled as such because they could not be identified to the species level. "Casual" indicates that there is some missing information in the report, such as data, location, or clear evidence of the species. 
 
 ```{r, echo=FALSE, warning=FALSE}
 inputPanel(
@@ -123,7 +133,7 @@ renderPlot({
 
 ```
 
-Column {data-width=700}
+Column {data-width=600}
 -------------------------------------
 **Observations throughout the year**
 
@@ -199,7 +209,7 @@ invasives |>
        title = "Invasive Species Observations of St. Olaf") 
 ```
 
-Column
+Column {data-width = 600}
 -------------------------
 
 **Invasive Domination?**
