@@ -14,7 +14,7 @@ library(dplyr)
 library(lubridate)
 
 library(readr)
-inat_stolaf <- read_csv("~/mini-proj-II/inat_with_invasives.csv")
+inat_stolaf <- read_csv("inat_with_invasives.csv")
 ```
 
 About
@@ -53,7 +53,7 @@ Column
 
 renderImage({
     # Return a list
-    list(src = "~/mini-proj-II/natlands.png",
+    list(src = "natlands.png",
          alt = "This is alternate text", width = 500, height = 700)
   })
 ```
