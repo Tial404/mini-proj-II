@@ -124,8 +124,15 @@ renderPlot({
 Invasive vs Native Species
 ========================================
 
-Column {data-width = 200}
+Column {data-width = 300}
 -------------------------
+
+**Invasive Species**
+
+
+In a given area, invasive species are those non-native species that actively cause harm to the ecosystem in some way. Often, this is due to outcompeting native species, causing them to be close to or at extinction. This in turn reduces biodiversity in an area and may have a cascading effect across the entire ecosystem. One common example is common buckthorn, a tree native to Eurasia that spreads rapidly in North American ecosystems and dominates, crowding out native species. It also includes species that are harmful to humans, such as wild parsnip, a plant that spreads rapidly once in large numbers and causes chemical burns to people who touch its sap.   
+The control of invasive species is more difficult than ever due to the global connectivity of the planet, so tracking the presence of invasive species and removing them is a primary goal of conservation efforts. We used information from the Minnesota DNR to determine how many observations of invasive species occured at St. Olaf on iNaturalist. 
+
 ```{r, echo = FALSE, warning = FALSE}
 invasives <- inat_stolaf |>
   filter(native == "invasive")
@@ -138,14 +145,19 @@ invasives |>
   mutate(species_guess = fct_reorder(species_guess, count)) |>
   ggplot(aes(x = species_guess, y = count)) +
   geom_col() +
+  theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),  
         panel.grid.minor = element_line(color = "grey90")) +
-  labs(x = "Species", y = "Num. Observations")  +
-    theme_bw()
+  labs(x = "Species", y = "Num. Observations",
+       title = "Invasive Species Observations of St. Olaf") 
 ```
 
-Column {data-width = 200}
+Column
 -------------------------
+
+**Invasive Domination?**
+
+Invasive species are a serious threat, and there are many instances where they seem to completely dominate an ecosystem. For example, in the southern USA, kudzu vines are often observed completely strangling massive patches of forest along roadsides. In the eastern USA, spotted lanternflies come out in masses each year despite being crushed by the dozens. At the same time, efforts are continually being made by conservationists to beat them back and prevent encroachment in addition to pulling out what has already invaded. The raw numbers may seem scary, but in comparison to the amount of native species, the story at St. Olaf is a little more heartening. 
 
 ```{r, echo = FALSE, warning = FALSE}
 inputPanel(
@@ -166,7 +178,7 @@ renderPlot({
   filter(type == input$radio) |>
   ggplot(aes(x = year_obs, y = invasive_obs)) +
   geom_point() +
-  labs(x = "Year", y = "Invasive Observations")  +
+  labs(x = "Year", y = "Invasive Observations", title = "Invasive Species Observations Over Time at St. Olaf")  +
     theme_bw()
 }, height = 500)
 ```
@@ -176,6 +188,10 @@ Seasonal Shifts
 
 Column {data-width = 400}
 -------------------------
+
+**Seasonal Effects at St. Olaf**
+
+Almost every species is affected by the seasons in some way. Some have very seasonal life cycles, like most insects that only move around in the warm months, or plants that die back in the winter. Trees remain, but without their most identifying features, and animals tend to become far less active. Few species are more active in the winter, but there are exceptions, such as migratory birds like the dark-eyed juncos, which are typically only seen in Minnesota in wintertime. The people of St. Olaf, too, are less active, hiding away from the cold. Thus, we may expect to see interesting seasonal changes in iNaturalist observations due to shifts in both human and non-human activity.
 
 ```{r, echo=FALSE}
 inputPanel(
@@ -214,6 +230,10 @@ inat_stolaf |>
 Column {data-width = 400}
 -------------------------
 
+**The Benefits of Winter**
+
+The famous cold of a Minnesota winter may have its benefits in the ecosystem. Despite its challenges, the native species of Minnesota have adapted to survive and even thrive. Non-native species, on the other hand, have only just begun to face its wrath. Thus, one potential limiting factor to be explored is the prevalence of invasive species across seasons, which could be key to holding them off. 
+
 ```{r, echo=FALSE}
 inputPanel(
   selectInput("select", label = h3("Season"), 
@@ -228,7 +248,7 @@ renderPlot({
                          ifelse(month(observed_on) %in% c(3,4,5), "Spring",
                                 ifelse(month(observed_on) %in% c(6,7,8), "Summer", "Fall"))),
          season = fct_relevel(season, "Winter", "Spring", "Summer", "Fall"),
-         native = replace_na(native, "native"),
+         native = replace_na(native, "non-invasive"),
          year_obs = year(observed_on)) |>
   group_by(native, season, year_obs, .drop = FALSE) |>
   summarise(count = n()) |>
@@ -238,3 +258,21 @@ renderPlot({
     theme_bw()
 }, height = 500)
 ```
+
+Conclusions and Future Works
+========================================
+
+**Conclusions**
+
+The St. Olaf Natural Lands iNaturalist data reveals some impressive trends with regards to the species observed over the years. We find that there is significant biodiveristy across the entirety of the Natural Lands, including many different plants and animals. Observations have generally increased over the years, possibly due to greater conservation efforts and more usage of the Natural Lands and iNaturalist by students. In addition, we find an impressively low number of invasive species in the Natural Lands, again supporting the conservation efforts in recent years to preserve and protect native species. Our data can also be used to explore seasonal trends for various species, revealing valuable information about their life histories and behavior. 
+
+
+**Limitations**
+
+The primary limitation to our data is the information we have on invasive species. Due to small differences in the naming conventions of species on iNaturalist and the Minnesota DNR website, it is likely that some observations of invasive species were not flagged as such when merging the data. Human behavior also plays a role in the invasive species data on iNaturalist, as people are likely to underreport invasive species due to them being less interesting than the native species found in the area. Thus, our analysis on invasive species comes with the caution that the true abundance of invasive species in the Natural Lands is likely higher. Rare species are also likely overrepresented in the data, again because it is a more interesting to most people to report a rare species seen once rather than the same common species twenty times. 
+
+**Future Directions** 
+
+One step we would like to take with this project in the future is categorizing our results by broader groups of organisms, such as animals vs plants or birds vs mammals. Since many individual species only have a handful of observations, combining related species would allow us to see broader trends affecting these groups. For example, we could observe how plant observations vary seasonally compared to birds and insects.   
+
+We would also liked to have looked deeper into the data on descriptions of observations provided by iNaturalist. With text analysis, we could examine the tone of these descriptions compared to the species, which may reveal animosity towards certain groups, such as invasive species, versus a potentially more positive tone towards rare or beautiful species.
