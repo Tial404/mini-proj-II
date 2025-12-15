@@ -1,0 +1,12 @@
+name: DataScience2Final
+title: DataScience2Final
+username: schmid47
+account: schmid47
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 16316327
+bundleId: 11325619
+url: https://schmid47.shinyapps.io/DataScience2Final/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
